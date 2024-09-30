@@ -88,6 +88,73 @@ unsigned countValueInCol(int** mas, unsigned n, unsigned m, int value, unsigned 
 	return count;
 }
 
+// Нахождение определителя
+// mas - матрица
+// n - количество строк и столбцов матрицы
+int getDeterminant(int **mas, unsigned n) {
+    if (n > 0){
+        int det = 0;
+        int scalar = 1; 
+        
+        if(n == 1) {
+            return mas[0][0];
+        }
+
+        if(n == 2) {
+            return mas[0][0]*mas[1][1] - mas[0][1]*mas[1][0];
+        }
+        
+        int **newmas = new int*[n-1];
+        for(int i = 0; i < n-1; i++) {
+            newmas[i] = new int[n-1];
+        }
+
+        for(int j = 0; j < n; j++) {
+            getMatrixWithoutRowAndCol(mas, n, 0, j, newmas);
+
+            det = det + (scalar * mas[0][j] * getDeterminant(newmas, n-1));
+
+            scalar = -scalar;
+        }
+
+        for(int i = 0; i < n-1; i++) {
+            delete [] newmas[i];
+        }
+        delete [] newmas;
+        
+        return det;
+    }
+}
+
+
+// Нахождение матрицы без одной строки и без одного столбца (нужно для нахождения определителя)
+// mas - матрица
+// n - количество строк и столбцов матрицы
+// row - удаляемый ряд
+// col - удаляемый столбец
+// newmas - новая матрица
+void getMatrixWithoutRowAndCol(int **mas, unsigned n, unsigned row, unsigned col, int **newmas) {
+  int offsetRow = 0; 
+  int offsetCol = 0; 
+  for(int i = 0; i < n-1; i++) {
+    if(i == row) {
+      offsetRow = 1; 
+    }
+ 
+    offsetCol = 0;
+    for(int j = 0; j < n-1; j++) {
+      if(j == col) {
+        offsetCol = 1; 
+      }
+ 
+      newmas[i][j] = mas[i + offsetRow][j + offsetCol];
+    }
+  }
+}
+
+
+
+
 // основная программа
 int main()
 {
@@ -98,3 +165,4 @@ int main()
 	outputMatrix(mas, n, m);
 	deleteMatrix(&mas, n);
 }
+
