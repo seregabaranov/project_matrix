@@ -1,8 +1,8 @@
-﻿#include <iostream>
+#include <iostream>
 #include <iomanip>
 using namespace std;
 
-// создание матрицы 
+// Тест2 создание матрицы 
 // mas - указатель на матрицу
 // n - количество строк 
 // m - количество столбцов
