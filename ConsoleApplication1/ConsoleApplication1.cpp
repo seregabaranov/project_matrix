@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 using namespace std;
-
+// -
 // создание матрицы 
 // mas - указатель на матрицу
 // n - количество строк 
