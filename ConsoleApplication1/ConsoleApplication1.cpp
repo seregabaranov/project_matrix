@@ -188,6 +188,9 @@ int main()
 	createMatrix(&mas, n, m);
 	inputMatrix(&mas, n, m);
 	outputMatrix(mas, n, m);
+
+	outputMatrixToFile(mas, n, m, "mas.txt");
+
 	deleteMatrix(&mas, n);
 }
 

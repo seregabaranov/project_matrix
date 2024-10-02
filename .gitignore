@@ -396,3 +396,20 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+ConsoleApplication1/.vs/ConsoleApplication1/v17/.suo
+ConsoleApplication1/.vs/ConsoleApplication1/v17/Browse.VC.db
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/CL.command.1.tlog
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/CL.read.1.tlog
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/CL.write.1.tlog
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/ConsoleApplication1.lastbuildstate
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/link.command.1.tlog
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/link.read.1.tlog
+ConsoleApplication1/x64/Debug/ConsoleA.1e93efee.tlog/link.write.1.tlog
+ConsoleApplication1/x64/Debug/ConsoleApplication1.exe.recipe
+ConsoleApplication1/x64/Debug/ConsoleApplication1.ilk
+ConsoleApplication1/x64/Debug/ConsoleApplication1.log
+ConsoleApplication1/x64/Debug/ConsoleApplication1.obj
+ConsoleApplication1/x64/Debug/ConsoleApplication1.pdb
+ConsoleApplication1/x64/Debug/ConsoleApplication1.vcxproj.FileListAbsolute.txt
+ConsoleApplication1/x64/Debug/vc143.idb
+ConsoleApplication1/x64/Debug/vc143.pdb

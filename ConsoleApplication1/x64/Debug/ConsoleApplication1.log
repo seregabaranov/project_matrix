@@ -1,10 +1,10 @@
 ﻿  ConsoleApplication1.cpp
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(103,20): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(109,21): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(136,26): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(140,26): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(148,26): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(171,20): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(172,21): warning C4018: <: несоответствие типов со знаком и без знака
-C:\klub_razraboff\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(155): warning C4715: getDeterminant: значение возвращается не при всех путях выполнения
-  ConsoleApplication1.vcxproj -> C:\klub_razraboff\project_matrix\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(103,20): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(109,21): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(136,26): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(140,26): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(148,26): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(171,20): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(172,21): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\ConsoleApplication1.cpp(155): warning C4715: getDeterminant: значение возвращается не при всех путях выполнения
+  ConsoleApplication1.vcxproj -> C:\Users\SergeyAsus\OneDrive\Рабочий стол\pm22\project_matrix\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
