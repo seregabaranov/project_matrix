@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 using namespace std;
 // -
@@ -88,6 +89,33 @@ unsigned countValueInCol(int** mas, unsigned n, unsigned m, int value, unsigned 
 	return count;
 }
 
+
+
+// Нахождение матрицы без одной строки и без одного столбца (нужно для нахождения определителя)
+// mas - матрица
+// n - количество строк и столбцов матрицы
+// row - удаляемый ряд
+// col - удаляемый столбец
+// newmas - новая матрица
+void getMatrixWithoutRowAndCol(int** mas, unsigned n, unsigned row, unsigned col, int** newmas) {
+	int offsetRow = 0;
+	int offsetCol = 0;
+	for (int i = 0; i < n - 1; i++) {
+		if (i == row) {
+			offsetRow = 1;
+		}
+
+		offsetCol = 0;
+		for (int j = 0; j < n - 1; j++) {
+			if (j == col) {
+				offsetCol = 1;
+			}
+
+			newmas[i][j] = mas[i + offsetRow][j + offsetCol];
+		}
+	}
+}
+
 // Нахождение определителя
 // mas - матрица
 // n - количество строк и столбцов матрицы
@@ -127,31 +155,28 @@ int getDeterminant(int **mas, unsigned n) {
 }
 
 
-// Нахождение матрицы без одной строки и без одного столбца (нужно для нахождения определителя)
+// Функция для вывода матрицы в файл
 // mas - матрица
-// n - количество строк и столбцов матрицы
-// row - удаляемый ряд
-// col - удаляемый столбец
-// newmas - новая матрица
-void getMatrixWithoutRowAndCol(int **mas, unsigned n, unsigned row, unsigned col, int **newmas) {
-  int offsetRow = 0; 
-  int offsetCol = 0; 
-  for(int i = 0; i < n-1; i++) {
-    if(i == row) {
-      offsetRow = 1; 
-    }
- 
-    offsetCol = 0;
-    for(int j = 0; j < n-1; j++) {
-      if(j == col) {
-        offsetCol = 1; 
-      }
- 
-      newmas[i][j] = mas[i + offsetRow][j + offsetCol];
-    }
-  }
-}
+// n - количество строк
+// m - количество столбцов
+// filename - название файла
+void outputMatrixToFile(int** mas, unsigned n, unsigned m, const string& filename) {
+	ofstream outfile(filename);
+	if (mas == nullptr) return;
+	if (!outfile.is_open()) {
+		cout << "error opening files: " << filename << endl;
+		return;
+	}
 
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < m; ++j) {
+			outfile << mas[i][j] << " ";
+		}
+		outfile << endl;
+	}
+
+	outfile.close();
+}
 
 
 
