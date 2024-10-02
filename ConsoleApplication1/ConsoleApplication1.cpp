@@ -183,13 +183,15 @@ void outputMatrixToFile(int** mas, unsigned n, unsigned m, const string& filenam
 // основная программа
 int main()
 {
-	int** mas = nullptr, n = 4, m = 4;
+	int** mas = nullptr, n = 2, m = 2;
 
 	createMatrix(&mas, n, m);
 	inputMatrix(&mas, n, m);
 	outputMatrix(mas, n, m);
 
 	outputMatrixToFile(mas, n, m, "mas.txt");
+
+	cout << "getDeterminant=" << getDeterminant(mas, n) << endl;
 
 	deleteMatrix(&mas, n);
 }
