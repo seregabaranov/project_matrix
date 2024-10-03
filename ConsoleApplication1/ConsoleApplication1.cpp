@@ -178,6 +178,81 @@ void outputMatrixToFile(int** mas, unsigned n, unsigned m, const string& filenam
 	outfile.close();
 }
 
+//Сложение двух заданных строк матрицы
+//matrix - матрица
+//rows - количество строк матрицы
+//cols - количество столбцов матрицы
+//rowMatrix1 - строка матрицы(куда прибавляем)
+//rowMatrix2 - строка матрицы(что прибавляем)
+//element - элемент матрицы
+void summationRowsMatrix(int*** matrix, size_t rows, size_t cols, size_t rowMatrix1, size_t rowMatrix2) {
+    if(matrix == nullptr) {
+        return;
+    }
+    
+    //Проверка входных данных на корректность
+    if(rowMatrix1 < 0 || rowMatrix2 < 0 || rows < 0 || cols < 0
+       || rowMatrix2 > rows || rowMatrix1 > rows) {
+        std::cout << "Выход за пределы массива" << std::endl;
+    } else {
+        for (int j = 0; j < cols; ++j) {
+            (*matrix)[rowMatrix1][j] += (*matrix)[rowMatrix2][j];
+        }
+    }
+    
+    return;
+}
+
+//Сложение двух заданных столбцов матрицы
+//matrix - матрица
+//rows - количество строк матрицы
+//cols - количество столбцов матрицы
+//colMatrix1 - столбец матрицы(куда прибавляем)
+//colMatrix2 - столбец матрицы(что прибавляем)
+void summationColsMatrix(int*** matrix, size_t rows, size_t cols, size_t colMatrix1, size_t colMatrix2) {
+    if(matrix == nullptr) {
+        return;
+    }
+    
+    //Проверка входных данных на корректность
+    if(colMatrix1 < 0 || colMatrix2 < 0 || rows < 0 || cols < 0
+       || colMatrix2 > rows || colMatrix1 > rows) {
+        std::cout << "Выход за пределы массива" << std::endl;
+    } else {
+        for (int i = 0; i < rows; ++i) {
+            (*matrix)[i][colMatrix1] += (*matrix)[i][colMatrix2];
+        }
+    }
+    
+    return;
+}
+
+//Сложение двух матриц
+//matrix1 - матрица1(к которой прибавляем)
+//rows1 - количество строк матрицы1
+//cols1 - количество столбцов матрицы1
+//matrix2 - матрица2(которую прибавляем)
+//rows2 - количество строк матрицы2
+//cols2 - количество столбцов матрицы2
+void summationMatrix(int*** matrix1, size_t rows1, size_t cols1, int*** matrix2, size_t rows2, size_t cols2) {
+    
+    if(matrix1 == nullptr || matrix2 == nullptr) {
+        return;
+    }
+    
+    //Проверка возможности сложения матриц
+    if(rows1 == rows2 && cols1 == cols2) {
+        for(int i = 0; i < rows1; ++i) {
+            for(int j = 0; j < cols2; ++j) {
+                (*matrix1)[i][j] += (*matrix2)[i][j];
+            }
+        }
+    } else {
+        std::cout << "Матрицы невозможно сложить" << std::endl;
+    }
+    
+    return;
+}
 
 
 // основная программа
