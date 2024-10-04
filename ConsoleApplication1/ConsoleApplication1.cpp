@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iomanip>
 using namespace std;
-// - тест 4
+// - тест 5
 // создание матрицы 
 // mas - указатель на матрицу
 // n - количество строк 
