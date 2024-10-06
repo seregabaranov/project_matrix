@@ -254,6 +254,45 @@ void summationMatrix(int*** matrix1, size_t rows1, size_t cols1, int*** matrix2,
     return;
 }
 
+// количество попарно несовпадающих элементов в двух строках
+// firstRow - указатель на первую строку
+// secondRow - указатель на вторую строку
+// firstSize - кол-во элементов в первой строке
+// secondSize - кол-во элементов во второй строке
+int countPairwiseDifferentElementsTwoRows(int* firstRow, unsigned firstSize, int* secondRow, unsigned secondSize) {
+
+    unsigned count = 0; 
+    
+    if (firstRow == nullptr || secondRow == nullptr) return count;
+
+    unsigned cols = min(firstSize, secondSize);
+
+    for (int i = 0; i < cols; i++)
+        if (firstRow[i] != secondRow[i]) count++;
+
+    return count;
+}
+
+// количество попарно несовпадающих элементов в двух матрицах
+// firstMas - указатель на первую матрицу
+// secMas - указатель на вторую матрицу
+// firstRows - количество строк в первой матрице 
+// firstCols - количество столбцов в первой матрице
+// secRows - количество строк во второй матрице
+// secCols - количество столбцов во второй матрице
+int countPairwiseDifferentElementsTwoMatrices(int** firstMas, unsigned firstRows, unsigned firstCols, int** secMas, unsigned secRows, unsigned secCols) {
+    
+    unsigned count = 0;
+
+    if (firstMas == nullptr || secMas == nullptr) return 0;
+
+    unsigned rows = min(firstRows, secRows);
+
+    for (int i = 0; i < rows; i++)
+        count += countPairwiseDifferentElementsTwoRows(firstMas[i], firstCols, secMas[i], secCols);
+
+    return count;
+}
 
 // основная программа
 int main()
