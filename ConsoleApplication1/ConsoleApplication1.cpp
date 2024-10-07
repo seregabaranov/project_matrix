@@ -348,6 +348,26 @@ int countPairwiseDifferentElementsTwoMatrices(int** firstMas, unsigned firstRows
     return count;
 }
 
+// удаление строки матрицы со сдвигом 
+// mas - указатель на матрицу
+// n - количество строк 
+// m - количество столбцов
+// num - номер удаляемой строки
+int** deleteLine(int** mas, int n, int m, int num) {
+    if (n <= num) return mas; // проверка на наличие удаляемой строки в матрице
+    int** out = new int* [n - 1]; // создание новой матрицы
+    for (int i = 0, k = 0; i < n; i++, k++) {
+        if (i == num) k--; // в случае достижения номера удаляемой строки мы пропускаем итерацию
+        else {
+            out[k] = new int[m]; // создание строки
+            for (int j = 0; j < m; j++) { // заполнение элементами матрицы
+                out[k][j] = mas[i][j];
+            }
+        }
+    }
+    return out;
+}
+
 // основная программа
 int main()
 {
