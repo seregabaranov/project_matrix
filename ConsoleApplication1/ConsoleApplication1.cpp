@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <string.h>
+
 using namespace std;
 // - тест 5
 // создание матрицы 
