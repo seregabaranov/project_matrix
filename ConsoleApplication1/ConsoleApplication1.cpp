@@ -380,6 +380,8 @@ int menu() {
 	cout << " 6 - multiplyingRowByNumber" << endl;
 	cout << " 7 - multiplyingColumnByNumber" << endl;
 	cout << " 8 - multiplyingMatrixByNumber" << endl;
+	cout << " 9 - countValueInRow" << endl;
+	cout << "10 - countValueInCol" << endl;
 
 	cout << " 0 - exit" << endl;
 
@@ -449,7 +451,18 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		case 0: return 0;
+		case 9:
+			cout << "enter row, value:";
+			cin >> row>> number;
+			system("cls");
+			cout<<"countValueInRow="<<countValueInRow(mas, n, m, number, row)<<endl;
+			break;
+		case 10:
+			cout << "enter column, value:";
+			cin >> column >> number;
+			system("cls");
+			cout << "countValueInCol=" << countValueInCol(mas, n, m, number, column) << endl;
+		break;		case 0: return 0;
 			break;
 		}
 	}
