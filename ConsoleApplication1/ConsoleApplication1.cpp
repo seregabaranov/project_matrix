@@ -385,6 +385,7 @@ int menu() {
 	cout << " 9 - countValueInRow" << endl;
 	cout << "10 - countValueInCol" << endl;
 	cout << "11 - MatrixFromFile" << endl;
+	cout << "12 - smoothOutMatrix" << endl;
 
 	cout << " 0 - exit" << endl;
 
@@ -559,7 +560,15 @@ int main()
 			cout << "MatrixFromFile - done\n\n";
 
 			break;		
+		case 12:
 		
+			system("cls");
+			createMatrix(&mas2, n, m);
+			smoothOutMatrix(&mas, n, m, &mas2);
+			cout << "smoothOutMatrix - done\n\n";
+			system("cls");
+			outputMatrix(mas2, n, m);
+			break;
 		
 		case 0: return 0;
 			break;
