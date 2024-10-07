@@ -426,7 +426,55 @@ void MatrixFromFile(int*** mas, unsigned& n, unsigned& m, const string& filename
 
 	in.close();
 }
+
+// Сглаживание матрицы - процесс получения новой матрицы,
+// в которой i,j-ый элемент является средним арифметическим
+// своих соседей в изначальной матрице
+// mat - матрица
+// len - длина
+// height - высота
+// newMat - cглаженная матрица
+// sumOfNeighbors - функция суммирования значений соседних клеток для x,y-ой клетки
+// У клеток внутри границ считается сумма 8 соседей делится на 8
+// У граничных клеток, за исключением угловых, суммируются 5 соседей и делятся на 5
+// У угловых клеток суммируются 3 соседа и делятся на 3
+// Титов Егор
+
+int sumOfNeighbors(int*** mat, unsigned len, unsigned height, unsigned x, unsigned y)
+{
+	int sumi = 0;
+	for (int i = -1; i < 2; i++)
+		for (int j = -1; j < 2; j++)
+			if (x + i >= 0 && x + i < len && y + j >= 0 && y + j < height)
+				sumi += (*mat)[x + i][y + j];
+	sumi -= (*mat)[x][y];
+		return sumi;
+}
+void smoothOutMatrix(int*** mat, unsigned len, unsigned height, int*** output)
+{
+	if (len == 1 && height == 1)
+		(*output)[0][0] = 0;
+	else
+	{
+		for (int i = 1; i < len - 1; i++) // просчёт клеток внутри границ
+			for (int j = 1; j < height - 1; j++)
+				(*output)[i][j] = sumOfNeighbors(mat, len, height, i, j) / 8;
+		for (int j = 1; j < len - 1; j++) // просчёт клеток на границах (кроме углов)
+		{
+			(*output)[0][j] = sumOfNeighbors(mat, len, height, 0, j) / 5;
+			(*output)[len - 1][j] = sumOfNeighbors(mat, len, height, len - 1, j) / 5;
+			(*output)[j][0] = sumOfNeighbors(mat, len, height, j, 0) / 5;
+			(*output)[j][height - 1] = sumOfNeighbors(mat, len, height, j, height - 1) / 5;
+		}
+		// просчёт угловых клеток
+		(*output)[0][0] = sumOfNeighbors(mat, len, height, 0, 0) / 3;
+		(*output)[0][height - 1] = sumOfNeighbors(mat, len, height, 0, height - 1) / 3;
+		(*output)[len - 1][0] = sumOfNeighbors(mat, len, height, len - 1, 0) / 3;
+		(*output)[len - 1][height - 1] = sumOfNeighbors(mat, len, height, len - 1, height - 1) / 3;
+	}
+}
 // основная программа
+// :0
 int main()
 {
 	setlocale(0, "");
