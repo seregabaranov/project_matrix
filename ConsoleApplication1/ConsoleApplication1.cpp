@@ -254,6 +254,60 @@ void summationMatrix(int*** matrix1, size_t rows1, size_t cols1, int*** matrix2,
     return;
 }
 
+// Умножение строки матрицы на целое число  
+// mas - матрица
+// rows - количество строк
+// columns - количество столбцов
+// numRow - номер строки, которую нужно умножить
+// num - целое число, на которое умножается строка
+// result - изменённая матрица
+
+void multiplyingRowByNumber(int** mas, unsigned rows, unsigned columns, unsigned numRow, int num, int*** result) {
+    if (mas == nullptr) return;
+    if (numRow < 0) return;
+
+    for (unsigned i = 0; i < rows; i++)
+        for (unsigned j = 0; j < columns; j++)
+            if (i == numRow)
+                (*result)[i][j] = mas[i][j] * num;
+            else
+                (*result)[i][j] = mas[i][j];
+}
+// Умножение столбца матрицы на целое число  
+// mas - матрица
+// rows - количество строк
+// columns - количество столбцов
+// numColumns - номер столбца, который нужно умножить
+// num - целое число, на которое умножается столбец
+// result - изменённая матрица
+
+void multiplyingColumnByNumber(int** mas, unsigned rows, unsigned columns, unsigned numColumn, int num, int*** result) {
+    if (mas == nullptr) return;
+    if (numColumn < 0) return;
+
+    for (unsigned i = 0; i < rows; i++)
+        for (unsigned j = 0; j < columns; j++)
+            if (j == numColumn)
+                (*result)[i][j] = mas[i][j] * num;
+            else
+                (*result)[i][j] = mas[i][j];
+}
+
+// Умножение матрицы на целое число  
+// mas - матрица
+// rows - количество строк
+// columns - количество столбцов
+// num - целое число, на которое умножается матрица
+// result - изменённая матрица
+
+void multiplyingMatrixByNumber(int** mas, unsigned rows, unsigned columns, int num, int*** result) {
+    if (mas == nullptr) return;
+
+    for (unsigned i = 0; i < rows; i++)
+        for (unsigned j = 0; j < columns; j++)
+            (*result)[i][j] = (mas[i][j]) * num;
+}
+
 // количество попарно несовпадающих элементов в двух строках
 // firstRow - указатель на первую строку
 // secondRow - указатель на вторую строку
@@ -298,6 +352,10 @@ int countPairwiseDifferentElementsTwoMatrices(int** firstMas, unsigned firstRows
 int main()
 {
 	int** mas = nullptr, n = 2, m = 2;
+    int** result = nullptr;
+
+    createMatrix(&result, n, m);
+
 
 	createMatrix(&mas, n, m);
 	inputMatrix(&mas, n, m);
@@ -306,6 +364,18 @@ int main()
 	outputMatrixToFile(mas, n, m, "mas.txt");
 
 	cout << "getDeterminant=" << getDeterminant(mas, n) << endl;
+
+    cout << "multiplying0RowByNumber2=" << endl;
+    multiplyingRowByNumber(mas, n, m, 0, 2, &result);
+    outputMatrix(result, n, m);
+
+    cout << "multiplying1ColumnByNumber5=" << endl;
+    multiplyingColumnByNumber(mas, n, m, 1, 5, &result);
+    outputMatrix(result, n, m);
+
+    cout << " multiplyingMatrixByNumber10=" << endl;
+    multiplyingMatrixByNumber(mas, n, m, 10, &result);
+    outputMatrix(result, n, m);
 
 	deleteMatrix(&mas, n);
 }
