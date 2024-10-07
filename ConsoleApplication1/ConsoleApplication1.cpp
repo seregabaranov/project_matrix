@@ -394,20 +394,20 @@ void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename)
 	in.open(filename);
 	if (mas == nullptr) return;
 	if (!in.is_open()) {
-		//cout << "error opening files: " << filename << endl;
+		cout << "error opening files: " << filename << endl;
 		return;
 	}
 	char line[256];
 	m = 1;
 	n = 1;
-	in.getline(line, 256); // считываем строку целиком
+	in.getline(line, 256); 
 	for (int i = 0; i < strlen(line); ++i)
 		if (line[i] == ' ')m++;
 
-	while (!in.eof())//пока не достигли конца файла f, повторяем действия
+	while (!in.eof())
 	{
-		in.getline(line, 256); // считываем строку целиком
-		n++;//увеличиваем счетчик строк в файле
+		in.getline(line, 256); 
+		n++;
 	}
 
 	in.close();
