@@ -388,6 +388,38 @@ int menu() {
 	cin >> result;
 	return result;
 }
+
+void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename) {
+	ifstream in;
+	in.open(filename);
+	if (mas == nullptr) return;
+	if (!in.is_open()) {
+		//cout << "error opening files: " << filename << endl;
+		return;
+	}
+	char line[256];
+	m = 1;
+	n = 1;
+	in.getline(line, 256); // считываем строку целиком
+	for (int i = 0; i < strlen(line); ++i)
+		if (line[i] == ' ')m++;
+
+	while (!in.eof())//пока не достигли конца файла f, повторяем действия
+	{
+		in.getline(line, 256); // считываем строку целиком
+		n++;//увеличиваем счетчик строк в файле
+	}
+
+	in.close();
+	in.open(filename);
+	for (int i = 0; i < n; ++i) {
+		for (int j = 0; j < m; ++j) {
+			in >> mas[i][j];
+		}
+	}
+
+	in.close();
+}
 // основная программа
 int main()
 {
