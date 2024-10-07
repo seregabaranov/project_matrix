@@ -382,6 +382,7 @@ int menu() {
 	cout << " 8 - multiplyingMatrixByNumber" << endl;
 	cout << " 9 - countValueInRow" << endl;
 	cout << "10 - countValueInCol" << endl;
+	cout << "11 - MatrixFromFile" << endl;
 
 	cout << " 0 - exit" << endl;
 
@@ -389,7 +390,7 @@ int menu() {
 	return result;
 }
 
-void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename) {
+void MatrixFromFile(int*** mas, unsigned& n, unsigned& m, const string& filename) {
 	ifstream in;
 	in.open(filename);
 	if (mas == nullptr) return;
@@ -398,8 +399,8 @@ void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename)
 		return;
 	}
 	char line[256];
-	m = 1;
-	n = 1;
+	m = 0;
+	n = 0;
 	in.getline(line, 256); 
 	for (int i = 0; i < strlen(line); ++i)
 		if (line[i] == ' ')m++;
@@ -409,13 +410,16 @@ void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename)
 		in.getline(line, 256); 
 		n++;
 	}
-
+	createMatrix(mas, n, m);
 	in.close();
 	in.open(filename);
+	char  cs[10];
+	int k =10;
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < m; ++j) {
-			in >> mas[i][j];
+			in >> (*mas)[i][j];
 		}
+	//	in.getline(cs, k);
 	}
 
 	in.close();
@@ -424,7 +428,8 @@ void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename)
 int main()
 {
 	setlocale(0, "");
-	int** mas = nullptr, ** mas2 = nullptr, n = 0, m = 0, row, column, number;
+	int** mas = nullptr, ** mas2 = nullptr, row, column, number;
+	unsigned n = 0, m = 0;
 	string filename;
 
 	while (1) {
@@ -494,7 +499,19 @@ int main()
 			cin >> column >> number;
 			system("cls");
 			cout << "countValueInCol=" << countValueInCol(mas, n, m, number, column) << endl;
-		break;		case 0: return 0;
+			break;
+		case 11:
+			cout << "enter filename:";
+			cin >> filename;
+			system("cls");
+		
+			MatrixFromFile(&mas, n, m, filename);
+			cout << "MatrixFromFile - done\n\n";
+
+			break;		
+		
+		
+		case 0: return 0;
 			break;
 		}
 	}
