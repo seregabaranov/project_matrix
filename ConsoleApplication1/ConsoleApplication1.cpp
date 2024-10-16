@@ -1,7 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <string.h>
+//#include "GLAUX.H"
+//#pragma comment (lib, "glaux.lib")
+
 
 using namespace std;
 // - тест 5
@@ -38,12 +42,15 @@ void inputMatrix(int*** mas, unsigned n, unsigned m) {
 // mas - матрица
 // n - количество строк 
 // m - количество столбцов
-void outputMatrix(int** mas, unsigned n, unsigned m) {
+void outputMatrix(int** mas, unsigned n, unsigned m, bool flag = true) {
 	if (mas == nullptr) return;
-	cout << setw(5);
+	//cout << setw(0);
 	for (unsigned i = 0; i < n; i++) {
 		for (unsigned j = 0; j < m; j++)
-			cout << setw(5) << mas[i][j];
+			if (flag)
+				cout << setw(0) << int(mas[i][j])<<',';
+			else
+				cout << ((mas[i][j] > 90) ? '*' : ' ');
 		cout << endl;
 	}
 }
@@ -378,14 +385,17 @@ int menu() {
 	cout << " 2 - inputMatrix" << endl;
 	cout << " 3 - outputMatrix" << endl;
 	cout << " 4 - outputMatrixToFile" << endl;
-	cout << " 5 - getDeterminant" << endl;
-	cout << " 6 - multiplyingRowByNumber" << endl;
-	cout << " 7 - multiplyingColumnByNumber" << endl;
-	cout << " 8 - multiplyingMatrixByNumber" << endl;
-	cout << " 9 - countValueInRow" << endl;
-	cout << "10 - countValueInCol" << endl;
-	cout << "11 - MatrixFromFile" << endl;
+	cout << " 5 - matrixFromFile" << endl;
+	cout << " 6 - getDeterminant" << endl;
+	cout << " 7 - multiplyingRowByNumber" << endl;
+	cout << " 8 - multiplyingColumnByNumber" << endl;
+	cout << " 9 - multiplyingMatrixByNumber" << endl;
+	cout << "10 - countValueInRow" << endl;
+	cout << "11 - countValueInCol" << endl;
 	cout << "12 - smoothOutMatrix" << endl;
+	cout << "13 - loadBMP" << endl;
+	cout << "14 - saveBMP" << endl;
+	cout << "15 - masRandom" << endl;
 
 	cout << " 0 - exit" << endl;
 
@@ -401,28 +411,28 @@ void MatrixFromFile(int*** mas, unsigned& n, unsigned& m, const string& filename
 		cout << "error opening files: " << filename << endl;
 		return;
 	}
-	char line[256];
+	char line[4096];
 	m = 0;
 	n = 0;
-	in.getline(line, 256); 
+	in.getline(line, 4096);
 	for (int i = 0; i < strlen(line); ++i)
 		if (line[i] == ' ')m++;
 
 	while (!in.eof())
 	{
-		in.getline(line, 256); 
+		in.getline(line, 4096);
 		n++;
 	}
 	createMatrix(mas, n, m);
 	in.close();
 	in.open(filename);
 	char  cs[10];
-	int k =10;
+	int k = 10;
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < m; ++j) {
 			in >> (*mas)[i][j];
 		}
-	//	in.getline(cs, k);
+		//	in.getline(cs, k);
 	}
 
 	in.close();
@@ -449,7 +459,7 @@ int sumOfNeighbors(int*** mat, unsigned len, unsigned height, unsigned x, unsign
 			if (x + i >= 0 && x + i < len && y + j >= 0 && y + j < height)
 				sumi += (*mat)[x + i][y + j];
 	sumi -= (*mat)[x][y];
-		return sumi;
+	return sumi;
 }
 void smoothOutMatrix(int*** mat, unsigned len, unsigned height, int*** output)
 {
@@ -474,13 +484,457 @@ void smoothOutMatrix(int*** mat, unsigned len, unsigned height, int*** output)
 		(*output)[len - 1][height - 1] = sumOfNeighbors(mat, len, height, len - 1, height - 1) / 3;
 	}
 }
+
+typedef unsigned  DWORD;
+typedef unsigned short WORD;
+typedef unsigned LONG;
+
+typedef struct tagBITMAPFILEHEADER
+{
+	WORD bfType;
+	DWORD bfSize;
+	WORD bfReserved1;
+	WORD bfReserved2;
+	DWORD bfOffBits;
+} BITMAPFILEHEADER, * PBITMAPFILEHEADER;
+
+
+typedef struct tagBITMAPINFOHEADER
+{
+	DWORD biSize;
+	LONG biWidth;
+	LONG biHeight;
+	WORD biPlanes;
+	WORD biBitCount;
+	DWORD biCompression;
+	DWORD biSizeImage;
+	LONG biXPelsPerMeter;
+	LONG biYPelsPerMeter;
+	DWORD biClrUsed;
+	DWORD biClrImportant;
+} BITMAPINFOHEADER, * PBITMAPINFOHEADER;
+
+
+	BITMAPFILEHEADER filehdr;
+	BITMAPINFOHEADER bmphdr;
+
+unsigned char* ipLoad(const char* fname, unsigned& n, unsigned& m)
+{
+	if (!fname)
+		return NULL;
+
+	BITMAPINFOHEADER* infohdr = NULL;
+	ifstream fsrc;
+
+
+	// Открыть файл
+	fsrc.open(fname, ios::in | ios::binary);
+	if (fsrc.fail())
+		throw runtime_error("Ошибка чтения графического файла");
+	// Чтение структуры BITMAPFILEHEADER
+	int si1 = 14;// sizeof(BITMAPFILEHEADER);
+	fsrc.read((char*)&filehdr, si1);
+	if (fsrc.fail())
+		throw runtime_error("Ошибка чтения заголовка файла BMP");
+	// Проверка типа файла
+	//if (bmphdr.biSize != 0x28)
+		//throw runtime_error("Неверный тип исходного файла");
+	// Проверка типа файла
+	if (filehdr.bfType != 0x4d42)
+		throw runtime_error("Неверный тип исходного файла");
+	// Чтение структуры BITMAPINFOHEADER
+	int si2 = sizeof(BITMAPINFOHEADER);
+	fsrc.read((char*)&bmphdr, sizeof(BITMAPINFOHEADER));
+	
+	n = bmphdr.biHeight;
+	m = bmphdr.biWidth * 3;
+	int totalbytes = bmphdr.biWidth * bmphdr.biHeight * 3;// filehdr.bfSize - sizeof(BITMAPFILEHEADER);
+	//char* mas_c = new char[totalbytes];
+	unsigned char* mas_uc = new unsigned char[totalbytes];
+	char c = ' ';
+	unsigned char cu;
+	unsigned w4 = 0, k = 0;
+	if ((bmphdr.biWidth * 3 % 4) > 0)
+		w4 = (4 - bmphdr.biWidth * 3 % 4);
+	for (int j = 0; j < bmphdr.biHeight; j++) {
+		for (int i = 0; i < bmphdr.biWidth * 3; i++) {
+			fsrc.read((char*)&c, 1);
+			cu = c;
+			mas_uc[k++] = cu;
+			//cout << i << "_" << int(cu) << "\n ";
+		}
+		for (int i = 0; i < w4; i++)
+			fsrc.read((char*)&c, 1);
+	}
+
+
+	fsrc.close();
+
+	return mas_uc;
+}
+void loadBMP(int*** mas, unsigned& n, unsigned& m, string filename) {
+	unsigned char* bmphdr = ipLoad(filename.c_str(), n, m);
+	createMatrix(mas, n, m);
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			(*mas)[n-1-i][j] = unsigned char(bmphdr[(j)+i * m]);
+
+}
+
+void grayScale(int** mas, unsigned& n, unsigned& m, int*** mas2) {
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j+=3)
+			(*mas2)[i][j / 3] = mas[i][j] * 0.11 + mas[i][j + 1] * 0.59 + mas[i][j + 2] * 0.3;
+
+}
+
+// проверка матрицы на симметричность отн-но главной диагонали 
+// mas -  указатель на матрицу
+// n - количество строк 
+// m - количество столбцов
+bool simmetrMatrix(int** mas, unsigned n, unsigned m) {
+	if (n != m) return 0;
+	for (unsigned i = 0; i < n; i++) {
+		for (unsigned j = 0; j < i; j++) {
+			if (mas[i][j] != mas[j][i]) {
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+
+// Транспонирование матрицы 
+// mas - матрица
+// n - количество строк 
+// m - количество столбцов
+// buf - буферная переменная
+void transponMatrix(int** mas, unsigned n, unsigned m, int*** newMas) {
+	if (mas == nullptr) return;
+	createMatrix(newMas, m, n);
+	for (unsigned i = 0; i < n; i++) {
+		for (unsigned j = 0; j < m; j++) {
+			(*newMas)[j][i] = mas[i][j];
+		}
+	}
+}
+
+
+// Функция генерации матрицы
+// mas - матрица
+// n - количество строк
+// m - количество столбцов
+void masRand(int*** mas, unsigned n, unsigned m, int bottomEdge, int topEdge)
+{
+	int range = abs(topEdge - bottomEdge) + 1;
+	if (range == 0) range = 1;
+	if (*mas == nullptr) createMatrix(mas, n, m);
+	for (unsigned i = 0; i < n; i++) {
+		for (unsigned j = 0; j < m; j++)
+			(*mas)[i][j] = rand() % range + bottomEdge;
+	}
+}
+
+
+// Поиск минимального элемента в строке
+// Возвращает минимальное значение
+// matrix - матрица
+// rows - количество строк 
+// cols - количество столбцов
+// numRow - номер строки для поиска минимального значения
+int findMinInRow(int** matrix, unsigned rows, unsigned cols, unsigned rowNum) {
+	if (matrix == nullptr) return 0;
+	if (rowNum < 0 || rowNum >= rows) return 0;
+	// Инициализация переменной для минимального значения
+	int minInRow = matrix[rowNum][0];
+	// Поиск минимального элемента в строке	
+	for (unsigned j = 1; j < cols; ++j) {
+		if (matrix[rowNum][j] < minInRow) {
+			minInRow = matrix[rowNum][j];
+		}
+	}
+	return minInRow;
+}
+
+
+// Поиск минимального элемента в столбце
+// Возвращает минимальное значение
+// matrix - матрица
+// rows - количество строк 
+// cols - количество столбцов
+// colNum - номер столбца для поиска минимального значения
+int findMinInCol(int** matrix, unsigned rows, unsigned cols, unsigned colNum) {
+	if (matrix == nullptr) return 0;
+	if (colNum < 0 || colNum >= cols) return 0;
+	// Инициализация переменной для минимального значения
+	int minInCol = matrix[0][colNum];
+	// Поиск минимального элемента в столбце
+	for (unsigned i = 1; i < rows; ++i) {
+		if (matrix[i][colNum] < minInCol) {
+			minInCol = matrix[i][colNum];
+		}
+	}
+	return minInCol;
+}
+
+// Поиск максимального элемента в строке
+// Возвращает максимальное значение
+// matrix - матрица
+// rows - количество строк 
+// cols - количество столбцов
+// numRow - номер строки для поиска максимального значения
+int findMaxInRow(int** matrix, unsigned rows, unsigned cols, unsigned rowNum) {
+	if (matrix == nullptr) return 0;
+	if (rowNum < 0 || rowNum >= rows) return 0;
+	// Инициализация переменной для максимального значения
+	int maxInRow = matrix[rowNum][0];
+	// Поиск максимального элемента в строке	
+	for (unsigned j = 1; j < cols; ++j) {
+		if (matrix[rowNum][j] > maxInRow) {
+			maxInRow = matrix[rowNum][j];
+		}
+	}
+	return maxInRow;
+}
+
+
+// Поиск максимального элемента в столбце
+// Возвращает максимальное значение
+// matrix - матрица
+// rows - количество строк 
+// cols - количество столбцов
+// colNum - номер столбца для поиска максимального значения
+int findMaxInCol(int** matrix, unsigned rows, unsigned cols, unsigned colNum) {
+	if (matrix == nullptr) return 0;
+	if (colNum < 0 || colNum >= cols) return 0;
+	// Инициализация переменной для максимального значения
+	int maxInCol = matrix[0][colNum];
+	// Поиск максимального элемента в столбце
+	for (unsigned i = 1; i < rows; ++i) {
+		if (matrix[i][colNum] > maxInCol) {
+			maxInCol = matrix[i][colNum];
+		}
+	}
+	return maxInCol;
+}
+
+
+//Копирование матрицы
+//mas - матрица
+//copyMas - скопированная матрица
+// n - количество строк
+// m - количество столбцов
+void copyMatrix(int** mas, unsigned n, unsigned m, int*** copyMas) {
+	if (mas == nullptr) {
+		copyMas = nullptr;
+		return;
+	}
+	createMatrix(copyMas, n, m);
+	for (unsigned i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			(*copyMas)[i][j] = mas[i][j];
+		}
+	}
+}
+
+//Сложение элементов заданной строки матрицы
+//matrix - матрица
+//rows - количество строк матрицы
+//cols - количество столбцов матрицы
+//rowMatrix - заданная строка матрицы
+//sum - сумма элементов строки матрицы
+int sumRowMatrix(int** matrix, unsigned rows, unsigned cols, unsigned rowMatrix) {
+	int sum = 0;
+	if (matrix == nullptr) {
+		return 0;
+	}
+
+	//Проверка входных данных на корректность
+	if (rowMatrix < 0 || cols < 0 || rowMatrix > rows) {
+		//cout << "Выход за пределы массива" << endl;
+		return 0;
+	}
+
+	for (unsigned j = 0; j < cols; ++j) {
+		sum += matrix[rowMatrix][j];
+	}
+	return sum;
+}
+
+//Сложение элементов заданного столбца матрицы
+//matrix - матрица
+//rows - количество строк матрицы
+//cols - количество столбцов матрицы
+//colMatrix - заданный столбец матрицы
+//sum - сумма элементов столбца матрицы
+int sumColMatrix(int** matrix, unsigned rows, unsigned cols, unsigned colMatrix) {
+	int sum = 0;
+	if (matrix == nullptr) {
+		return 0;
+	}
+
+	//Проверка входных данных на корректность
+	if (colMatrix < 0 || rows < 0 || colMatrix > cols) {
+		//cout << "Выход за пределы массива" << endl;
+		return 0;
+	}
+
+	for (unsigned i = 0; i < rows; ++i) {
+		sum += matrix[i][colMatrix];
+	}
+	return sum;
+}
+
+//Сложение элементов главной диагонали
+//matrix - матрица
+//rows - количество строк матрицы
+//cols - количество столбцов матрицы
+//sum - сумма элементов диагонали матрицы
+int sumDiagonalMatrix(int** matrix, unsigned rows, unsigned cols) {
+	int sum = 0;
+	if (matrix == nullptr) {
+		return 0;
+	}
+
+	//Проверка входных данных на корректность
+	if (cols < 0 || rows < 0) {
+		//cout << "Выход за пределы массива" << endl;
+		return 0;
+	}
+
+	for (unsigned i = 0; i < min(rows, cols); ++i) {
+		sum += matrix[i][i];
+	}
+	return sum;
+}
+
+//Умножение матриц
+//masA - первая матрица
+//masB - вторая матрица
+//result - результирующая матрица (произведение матриц)
+//An - количество строк первой матрицы
+//Am - количество столбцов первой матрицы
+//Bn - количество строк второй матрицы
+//Bm - количество столбцов второй матрицы
+void multMatrixes(int** masA, int** masB, unsigned An, unsigned Am, unsigned Bn, unsigned Bm, int*** result)
+{
+	if (Am != Bn) {
+		deleteMatrix(result, An);
+		(*result) = nullptr;
+	}
+	if (*result == nullptr)
+	{
+		createMatrix(result, An, Bm);
+	}
+
+	for (int i = 0; i < An; i++) {
+		for (int j = 0; j < Bm; j++) {
+			for (int k = 0; k < Am; k++) {
+				(*result)[i][j] += masA[i][k] * masB[k][j];
+			}
+		}
+	}
+}
+
+// Проверка заданной строки матрицы на то, что она - палиндром
+// matrix - матрица
+// n - количество строк 
+// m - количество столбцов
+// numRow - номер строки для проверки
+bool checkRowIsPalindrom(int** matrix, unsigned n, unsigned m, unsigned rowNum) {
+	if (matrix == nullptr) return 0;
+	if (rowNum < 0 || rowNum >= m) return 0;
+
+	for (unsigned j = 0; j <= m / 2; ++j) {
+		if (matrix[rowNum][j] != matrix[rowNum][m - 1 - j]) return 0;
+	}
+	return 1;
+}
+
+// Проверка матрицы на то, что она - нулевая
+// matrix - матрица
+// n - количество строк 
+// m - количество столбцов
+bool checkMatrixIsNull(int** matrix, unsigned n, unsigned m) {
+	if (matrix == nullptr) return 0;
+
+	for (unsigned i = 0; i < n; ++i)
+		for (unsigned j = 0; j < m; ++j) {
+			if (matrix[i][j] != 0) return 0;
+		}
+	return 1;
+}
+
+
+// Проверка матрицы на то, что она - единичная 
+// - т.е она квадратная, элементы на диагонали = 1, остальные = 0
+// matrix - матрица
+// n - количество строк 
+// m - количество столбцов
+bool checkMatrixIsIdentity(int** matrix, unsigned n, unsigned m) {
+	if (matrix == nullptr) return 0;
+	if (n != m) return 0;
+
+	for (unsigned i = 0; i < n; ++i)
+		if (matrix[i][i] != 1) return 0;
+
+	for (unsigned i = 0; i < n; ++i)
+		for (unsigned j = 0; j < m; ++j) {
+			if (i != j && matrix[i][j] != 0) return 0;
+		}
+	return 1;
+}
+
+// Удаление заданной строки матрицы
+// matrix - матрица
+// lines - количество строк 
+// columns - количество столбцов
+// num - номер строки для удаления
+int** deleteLine(int** matr, unsigned lines, unsigned columns, unsigned num) {
+	if (matr == nullptr) return nullptr; // проверка, что первоначальная матрица непустая
+	if (lines <= num) return matr; // проверка на наличие удаляемой строки в матрице
+	int** out = new int* [lines - 1]; // создание новой матрицы
+	for (unsigned i = 0, k = 0; i < lines; i++, k++) {
+		if (i == num) k--; // в случае достижения номера удаляемой строки мы пропускаем итерацию
+		else {
+			out[k] = new int[columns]; // создание строки
+			for (unsigned j = 0; j < columns; j++) { // заполнение элементами матрицы
+				out[k][j] = matr[i][j];
+			}
+		}
+	}
+	return out;
+}
+
+// Удаление заданного столбца матрицы
+// matrix - матрица
+// n - количество строк 
+// m - количество столбцов
+// colNum - номер столбца для для удаления
+int** deleteRow(int** matrix, unsigned n, unsigned m, unsigned colNum) {
+	if (matrix == nullptr) return nullptr;
+	if (colNum > m) return matrix;
+	int** out = nullptr;
+	createMatrix(&out, n, m - 1);
+
+	for (unsigned j = 0, k = 0; j < m; j++, k++) {
+		if (j == colNum) k--;
+		else {
+			for (unsigned i = 0; i < n; i++) {
+				out[i][k] = matrix[i][j];
+			}
+		}
+	}
+	return out;
+}
+
 // основная программа
-// :0
 int main()
 {
 	setlocale(0, "");
 	int** mas = nullptr, ** mas2 = nullptr, row, column, number;
-	unsigned n = 0, m = 0;
+	unsigned n = 0, m = 0, a, b;
 	string filename;
 
 	while (1) {
@@ -511,11 +965,11 @@ int main()
 			system("cls");
 			cout << "outputMatrixToFile - done\n\n";
 			break;
-		case 5:
+		case 6:
 			system("cls");
 			cout << "getDeterminant=" << getDeterminant(mas, n) << endl;
 			break;
-		case 6:
+		case 7:
 			cout << "enter row, number:";
 			cin >> row >> number;
 			createMatrix(&mas2, n, m);
@@ -523,7 +977,7 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		case 7:
+		case 8:
 			cout << "enter column, number:";
 			cin >> column >> number;
 			createMatrix(&mas2, n, m);
@@ -531,7 +985,7 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		case 8:
+		case 9:
 			cout << "enter number:";
 			cin >> number;
 			createMatrix(&mas2, n, m);
@@ -539,29 +993,28 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		case 9:
-			cout << "enter row, value:";
-			cin >> row>> number;
-			system("cls");
-			cout<<"countValueInRow="<<countValueInRow(mas, n, m, number, row)<<endl;
-			break;
 		case 10:
+			cout << "enter row, value:";
+			cin >> row >> number;
+			system("cls");
+			cout << "countValueInRow=" << countValueInRow(mas, n, m, number, row) << endl;
+			break;
+		case 11:
 			cout << "enter column, value:";
 			cin >> column >> number;
 			system("cls");
 			cout << "countValueInCol=" << countValueInCol(mas, n, m, number, column) << endl;
 			break;
-		case 11:
+		case 5:
 			cout << "enter filename:";
 			cin >> filename;
 			system("cls");
-		
+
 			MatrixFromFile(&mas, n, m, filename);
 			cout << "MatrixFromFile - done\n\n";
 
-			break;		
+			break;
 		case 12:
-		
 			system("cls");
 			createMatrix(&mas2, n, m);
 			smoothOutMatrix(&mas, n, m, &mas2);
@@ -569,7 +1022,32 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		
+		case 13:
+
+			cout << "enter filename:";
+			//filename = "smile1.bmp";
+			cin >> filename;
+			loadBMP(&mas, n, m, filename);
+			createMatrix(&mas2, n, m / 3);
+			grayScale(mas, n, m, &mas2);
+			deleteMatrix(&mas, n);
+			m /= 3;
+			mas = mas2;
+			system("cls");
+			outputMatrix(mas, n, m, false);
+			cout << "loadBMP - done\n\n";
+			break;
+		case 14:
+			break;
+		case 15:
+			cout << "enter n, m:";
+			cin >> n >> m;
+			cout << "enter a, b:";
+			cin >> a >> b;
+			masRand(&mas, n, m, a, b);
+			system("cls");
+			cout << "masRand - done\n\n";
+			break;
 		case 0: return 0;
 			break;
 		}
