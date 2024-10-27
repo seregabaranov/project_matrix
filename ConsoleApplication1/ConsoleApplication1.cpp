@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <string.h>
 using namespace std;
 // - тест 5
 // создание матрицы 
@@ -382,7 +383,7 @@ int menu() {
 	cout << " 8 - multiplyingMatrixByNumber" << endl;
 	cout << " 9 - countValueInRow" << endl;
 	cout << "10 - countValueInCol" << endl;
-
+	cout << "11 - binarizeMatrix" << endl;
 	cout << " 0 - exit" << endl;
 
 	cin >> result;
@@ -467,12 +468,25 @@ void smoothOutMatrix(int*** mat, unsigned len, unsigned height, int*** output)
 		(*output)[len - 1][height - 1] = sumOfNeighbors(mat, len, height, len - 1, height - 1) / 3;
 	}
 }
+
+void binarizeMatrix(int** mas, int threshold, unsigned rows, unsigned columns, int** result)
+{
+	for(int i = 0; i < rows; i++)
+		for(int j = 0; j < columns; j++)
+		{
+			if(mas[i][j] < threshold)
+				result[i][j] = 0;
+			else
+				result[i][j] = 1;
+		}
+}
+
 // основная программа
 // :0
 int main()
 {
 	setlocale(0, "");
-	int** mas = nullptr, ** mas2 = nullptr, n = 0, m = 0, row, column, number;
+	int** mas = nullptr, ** mas2 = nullptr, n = 0, m = 0, row, column, number, threshold;
 	string filename;
 
 	while (1) {
@@ -528,7 +542,7 @@ int main()
 			cin >> number;
 			createMatrix(&mas2, n, m);
 			multiplyingMatrixByNumber(mas, n, m, number, &mas2);
-			system("cls");
+			system("cls");	
 			outputMatrix(mas2, n, m);
 			break;
 		case 9:
@@ -542,7 +556,17 @@ int main()
 			cin >> column >> number;
 			system("cls");
 			cout << "countValueInCol=" << countValueInCol(mas, n, m, number, column) << endl;
-		break;		case 0: return 0;
+			break;
+		case 11:
+			cout << "enter threshold:";
+			cin >> threshold;
+			createMatrix(&mas2, n, m);
+			binarizeMatrix(mas, threshold, n, m, mas2);
+			system("cls");
+			outputMatrix(mas2, n, m);
+			break;
+		case 0: 
+			return 0;
 			break;
 		}
 	}
