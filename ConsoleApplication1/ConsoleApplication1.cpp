@@ -1,7 +1,7 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <string.h>
 using namespace std;
 // - тест 5
 // создание матрицы 
@@ -37,12 +37,15 @@ void inputMatrix(int*** mas, unsigned n, unsigned m) {
 // mas - матрица
 // n - количество строк 
 // m - количество столбцов
-void outputMatrix(int** mas, unsigned n, unsigned m) {
+void outputMatrix(int** mas, unsigned n, unsigned m, bool flag = true) {
 	if (mas == nullptr) return;
-	cout << setw(5);
+	//cout << setw(0);
 	for (unsigned i = 0; i < n; i++) {
 		for (unsigned j = 0; j < m; j++)
-			cout << setw(5) << mas[i][j];
+			if (flag)
+				cout << setw(0) << int(mas[i][j])<<',';
+			else
+				cout << ((mas[i][j] > 90) ? '*' : ' ');
 		cout << endl;
 	}
 }
@@ -383,14 +386,14 @@ int menu() {
 	cout << " 8 - multiplyingMatrixByNumber" << endl;
 	cout << " 9 - countValueInRow" << endl;
 	cout << "10 - countValueInCol" << endl;
-	cout << "11 - binarizeMatrix" << endl;
+
 	cout << " 0 - exit" << endl;
 
 	cin >> result;
 	return result;
 }
 
-void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename) {
+void MatrixFromFile(int*** mas, unsigned& n, unsigned& m, const string& filename) {
 	ifstream in;
 	in.open(filename);
 	if (mas == nullptr) return;
@@ -398,25 +401,28 @@ void MatrixFromFile(int** mas, unsigned& n, unsigned& m, const string& filename)
 		cout << "error opening files: " << filename << endl;
 		return;
 	}
-	char line[256];
-	m = 1;
-	n = 1;
-	in.getline(line, 256); 
+	char line[4096];
+	m = 0;
+	n = 0;
+	in.getline(line, 4096);
 	for (int i = 0; i < strlen(line); ++i)
 		if (line[i] == ' ')m++;
 
 	while (!in.eof())
 	{
-		in.getline(line, 256); 
+		in.getline(line, 4096);
 		n++;
 	}
-
+	createMatrix(mas, n, m);
 	in.close();
 	in.open(filename);
+	char  cs[10];
+	int k = 10;
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < m; ++j) {
-			in >> mas[i][j];
+			in >> (*mas)[i][j];
 		}
+		//	in.getline(cs, k);
 	}
 
 	in.close();
@@ -443,7 +449,7 @@ int sumOfNeighbors(int*** mat, unsigned len, unsigned height, unsigned x, unsign
 			if (x + i >= 0 && x + i < len && y + j >= 0 && y + j < height)
 				sumi += (*mat)[x + i][y + j];
 	sumi -= (*mat)[x][y];
-		return sumi;
+	return sumi;
 }
 void smoothOutMatrix(int*** mat, unsigned len, unsigned height, int*** output)
 {
@@ -468,25 +474,11 @@ void smoothOutMatrix(int*** mat, unsigned len, unsigned height, int*** output)
 		(*output)[len - 1][height - 1] = sumOfNeighbors(mat, len, height, len - 1, height - 1) / 3;
 	}
 }
-
-void binarizeMatrix(int** mas, int threshold, unsigned rows, unsigned columns, int** result)
-{
-	for(int i = 0; i < rows; i++)
-		for(int j = 0; j < columns; j++)
-		{
-			if(mas[i][j] < threshold)
-				result[i][j] = 0;
-			else
-				result[i][j] = 1;
-		}
-}
-
 // основная программа
-// :0
 int main()
 {
 	setlocale(0, "");
-	int** mas = nullptr, ** mas2 = nullptr, n = 0, m = 0, row, column, number, threshold;
+	int** mas = nullptr, ** mas2 = nullptr, n = 0, m = 0, row, column, number;
 	string filename;
 
 	while (1) {
@@ -517,11 +509,11 @@ int main()
 			system("cls");
 			cout << "outputMatrixToFile - done\n\n";
 			break;
-		case 5:
+		case 6:
 			system("cls");
 			cout << "getDeterminant=" << getDeterminant(mas, n) << endl;
 			break;
-		case 6:
+		case 7:
 			cout << "enter row, number:";
 			cin >> row >> number;
 			createMatrix(&mas2, n, m);
@@ -529,7 +521,7 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		case 7:
+		case 8:
 			cout << "enter column, number:";
 			cin >> column >> number;
 			createMatrix(&mas2, n, m);
@@ -537,7 +529,7 @@ int main()
 			system("cls");
 			outputMatrix(mas2, n, m);
 			break;
-		case 8:
+		case 9:
 			cout << "enter number:";
 			cin >> number;
 			createMatrix(&mas2, n, m);
@@ -545,28 +537,18 @@ int main()
 			system("cls");	
 			outputMatrix(mas2, n, m);
 			break;
-		case 9:
-			cout << "enter row, value:";
-			cin >> row>> number;
-			system("cls");
-			cout<<"countValueInRow="<<countValueInRow(mas, n, m, number, row)<<endl;
-			break;
 		case 10:
+			cout << "enter row, value:";
+			cin >> row >> number;
+			system("cls");
+			cout << "countValueInRow=" << countValueInRow(mas, n, m, number, row) << endl;
+			break;
+		case 11:
 			cout << "enter column, value:";
 			cin >> column >> number;
 			system("cls");
 			cout << "countValueInCol=" << countValueInCol(mas, n, m, number, column) << endl;
-			break;
-		case 11:
-			cout << "enter threshold:";
-			cin >> threshold;
-			createMatrix(&mas2, n, m);
-			binarizeMatrix(mas, threshold, n, m, mas2);
-			system("cls");
-			outputMatrix(mas2, n, m);
-			break;
-		case 0: 
-			return 0;
+		break;		case 0: return 0;
 			break;
 		}
 	}
